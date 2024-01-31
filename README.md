@@ -9,6 +9,8 @@ The base of this code is taken directly from Simon Wilison's approach outlined [
 To run the code you just need to plug in your openai api key.
 The agent will then run in a loop in the command line awaiting questions until you type 'exit'
 
+You can run this locally or by forking [this Repl](https://replit.com/@mattambrogi/Agent-Implementation)
+
 ### Comparing agent with a raw LLM call
 If you want to compare with straight up open ai call:
 - Comment out `agent.query(user_query)`
