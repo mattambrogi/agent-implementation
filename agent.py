@@ -3,7 +3,6 @@ from chat import Chat
 
 class Agent:
   action_re = re.compile('^Action: (\w+): (.*)$')
-  #action_re = re.compile('^Action: (\w+)(: (.*))?$')
 
   def __init__(self, tools, max_turns=10):
     self.tools = tools
