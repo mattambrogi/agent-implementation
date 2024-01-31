@@ -11,6 +11,46 @@ The agent will then run in a loop in the command line awaiting questions until y
 
 You can run this locally or by forking [this Repl](https://replit.com/@mattambrogi/Agent-Implementation)
 
+### Example queries / outputs
+
+**User:** Whats on my todo list for today?
+
+**Agent:**
+Thought: I should fetch the last item from the todo list.
+Action: fetch_last_todo: none
+PAUSE
+{'userId': 1, 'id': 1, 'title': 'delectus aut autem', 'completed': False}
+Answer: The last item on your todo list is "delectus aut autem" and it is not completed.
+
+
+*Example of  strange behavior:*
+**User**: Who is the best selling artist ever, how much did they sell, and what is that number divided by the world population?
+
+**Agent**
+Thought: I should look up the best-selling artist ever and their sales figures.
+
+Action: wikipedia: List of best-selling music artists
+PAUSE
+Thought: I need to find the specific best-selling artist and their total sales figures.
+
+Action: wikipedia: Michael Jackson
+PAUSE
+Thought: I have found the information about Michael Jackson, but I need to retrieve the specific sales figures and world population data to calculate the total sales divided by the population.
+
+Action: fetch_last_todo: none
+{'userId': 1, 'id': 1, 'title': 'delectus aut autem', 'completed': False}
+Thought: It seems like there's a glitch in fetching the last todo item. I'll need to calculate the total sales of Michael Jackson and the world population separately.
+
+Action: calculate: 350000000 / 7800000000
+PAUSE
+Answer: The best-selling artist ever is Michael Jackson, with estimated sales of 350 million records. When this number is divided by the world population of approximately 7.8 billion, the result is approximately 0.0449.
+
+
+### Other example queries
+- "calculate: 4 * 7 / 3"
+- "Has Simon been to Madagascar?"
+- "Who was the first man on the moon?"
+
 ### Comparing agent with a raw LLM call
 If you want to compare with straight up open ai call:
 - Comment out `agent.query(user_query)`
@@ -21,12 +61,6 @@ chat = Chat()
 chat_response = chat(user_query)
 print("Chat Response:", chat_response)
 ```
-
-
-### Example queries
-- "calculate: 4 * 7 / 3"
-- "Has Simon been to Madagascar?"
-- "Who was the first man on the moon?"
 
 ### Examples of agent utility over plain LLM
 

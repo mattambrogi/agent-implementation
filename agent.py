@@ -28,14 +28,11 @@ class Agent:
         if action not in self.known_actions:
           raise Exception("Unknown action: {}: {}".format(action, action_input))
         if action_input:
-          #print(" -- running {} {}".format(action, action_input))
           observation = self.known_actions[action](action_input)
         else:
           observation = self.known_actions[action]()
-        #print("Obversation:", observation)
         next_prompt = "Observation: {}".format(observation)
       else:
-        #print("no action found")
         return
         
     

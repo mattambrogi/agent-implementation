@@ -4,6 +4,9 @@ import os
 openai.api_key = os.environ['OPENAI_API_KEY']
 
 class Chat:
+  '''
+  Wrapper class for OpenAI's Chat API. Designed by Simon
+  '''
   def __init__(self, system="", model=None):
     self.system = system
     self.model = model
