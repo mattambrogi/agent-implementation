@@ -1,57 +1,54 @@
-import httpx
 from agent import Agent
+from chat import Chat
+from tools import (
+  wikipedia,
+  simon_blog_search,
+  calculate,
+  fetch_last_todo
+)
 
 def main():
-  def wikipedia(q):
-    """ 
-    wikipedia:
-    e.g. wikipedia: Django
-    Returns a summary from searching Wikipedia
-    """
-    return httpx.get("https://en.wikipedia.org/w/api.php", params={
-        "action": "query",
-        "list": "search",
-        "srsearch": q,
-        "format": "json"
-    }).json()["query"]["search"][0]["snippet"]
 
+  # todo = fetch_last_todo()
+  # print(f'todo: {todo}')
 
-  def simon_blog_search(q):
-    """
-    simon_blog_search:
-    e.g. simon_blog_search: Django
-    Search Simon's blog for that term
-    """
-    results = httpx.get("https://datasette.simonwillison.net/simonwillisonblog.json", params={
-        "sql": """
-        select
-          blog_entry.title || ': ' || substr(html_strip_tags(blog_entry.body), 0, 1000) as text,
-          blog_entry.created
-        from
-          blog_entry join blog_entry_fts on blog_entry.rowid = blog_entry_fts.rowid
-        where
-          blog_entry_fts match escape_fts(:q)
-        order by
-          blog_entry_fts.rank
-        limit
-          1""".strip(),
-        "_shape": "array",
-        "q": q,
-    }).json()
-    return results[0]["text"]
-
-  def calculate(what):
-    """
-    calculate:
-    e.g. calculate: 4 * 7 / 3
-    Runs a calculation and returns the number - uses Python so be sure to use floating point syntax if     necessary
-    """
-    return eval(what)
-
-  tools = [wikipedia, simon_blog_search, calculate]
+  tools = [wikipedia, simon_blog_search, calculate, fetch_last_todo]
   agent = Agent(tools)
 
-  #agent.query("calculate: 4 * 7 / 3")
+  '''
+  Example queries  
+  agent.query("calculate: 4 * 7 / 3")
   agent.query("Has Simon been to Madagascar?")
+  agent.query("Who was the first man on the moon?")
+
+  Some interesting to compare with straight up GPT call
+  Both LLM and Agent get this right:
+  chat("How old is the United States and what is its age in days?")
+
+  But here only agent gets right
+  agent.query("How old is the United States and what is its age raised to the 4th power?")
+  chat("How old is the United States and what is its age raised to the 4th power?")
+
+  agent.query("How old is the United States and what is its age raised to the 4th power?")
+
+  #chat = Chat()
+  '''
+
+  while True:
+    user_query = input("Enter a question or type 'exit' to quit: ")
+
+    if user_query.lower() == 'exit':
+      print('Exiting...')
+      break
+
+    agent.query(user_query)
+  
+
+  # Uncomment if you also want to use the Chat class
+  # chat = Chat()
+  # chat_response = chat(user_query)
+  # print("Chat Response:", chat_response)
+
 
 main()
+

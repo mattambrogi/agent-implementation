@@ -24,4 +24,5 @@ class Chat:
       model=self.model,
       messages=self.messages
     )
-    return completion.choices[0].message.content
+    response = completion.choices[0].message.content
+    return response

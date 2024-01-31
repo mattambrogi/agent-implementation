@@ -3,8 +3,9 @@ from chat import Chat
 
 class Agent:
   action_re = re.compile('^Action: (\w+): (.*)$')
-  
-  def __init__(self, tools, max_turns=5):
+  #action_re = re.compile('^Action: (\w+)(: (.*))?$')
+
+  def __init__(self, tools, max_turns=10):
     self.tools = tools
     self.max_turns = max_turns
     self.prompt = self.get_agent_prompt(self.tools)
@@ -13,6 +14,7 @@ class Agent:
 
   def query(self, prompt):
     i = 0
+    if i == 0: print(prompt)
     next_prompt = prompt
     action_re = self.__class__.action_re
     while i < self.max_turns:
@@ -21,20 +23,26 @@ class Agent:
       print(result)
       actions = [action_re.match(a) for a in result.split('\n') if action_re.match(a)]
       if actions:
-        action, action_input = actions[0].groups()
+        groups = actions[0].groups()
+        action = groups[0]
+        action_input = groups[1] if len(groups) > 1 else None
         if action not in self.known_actions:
           raise Exception("Unknown action: {}: {}".format(action, action_input))
-        print(" -- running {} {}".format(action, action_input))
-        observation = self.known_actions[action](action_input)
-        print("Obversation:", observation)
+        if action_input:
+          #print(" -- running {} {}".format(action, action_input))
+          observation = self.known_actions[action](action_input)
+        else:
+          observation = self.known_actions[action]()
+        #print("Obversation:", observation)
         next_prompt = "Observation: {}".format(observation)
       else:
+        #print("no action found")
         return
         
     
   def get_agent_prompt(self, tools):
-  
     tools_str = "\n".join([f"{tool.__doc__} \n" for tool in tools])
+    print(tools_str)
     
     prompt = f"""
     You run in a loop of Thought, Action, PAUSE, Observation.
